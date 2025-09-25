@@ -1,0 +1,50 @@
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function eds_help($route_name, RouteMatchInterface $route_match)
+{
+    switch ($route_name) {
+        case 'help.page.eds':
+            return t('
+        <h2>EBSCO EDS integration for Drupal.</h2>
+        <p>Most bugs have been ironed out, holes covered, features added. But this module is a work in progress. Please report bugs and suggestions, ok?</p>
+      ');
+    }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function eds_theme($existing, $type, $theme, $path)
+{
+    return [
+        'eds' => [
+            'variables' => [
+                'name' => NULL,
+                'description' => NULL,
+                'owner_first_name' => NULL,
+                'owner_last_name' => NULL,
+                'owner_email' => NULL,
+                'url' => NULL,
+                'friendly_url' => NULL,
+                'tags' => NULL,
+                'subject' => NULL,
+                'search_term' => NULL,
+                'view' => NULL
+            ],
+        ],
+    ];
+}
+
+function eds_theme_suggestions_libguide(array $variables)
+{
+    $view = $variables['view'];
+    $suggestions = [];
+    $suggestions[] = 'eds__view__' . $view->id();
+    $suggestions[] = 'eds__view__' . $view->id() . '__' . $view->current_display;
+    return $suggestions;
+}
