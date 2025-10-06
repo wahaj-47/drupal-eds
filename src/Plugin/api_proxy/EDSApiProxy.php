@@ -190,13 +190,16 @@ final class EDSApiProxy extends HttpApiPluginBase
      */
     private function getSessionToken($auth_token): string
     {
+        $expires_in = 1800;
         $session_id = $this->session->getId();
         $cid = 'eds.session_token.' . $session_id;
+
         if ($cache = $this->cache->get($cid)) {
+            $this->cache->set($cid, $cache->data, time() + $expires_in); // Refresh token expiry on use
             return $cache->data;
         }
 
-        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=edsapi&guest=n';
+        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=edsapi&guest=y';
 
         $psr7_response = $this->client->request(
             'get',
@@ -225,8 +228,8 @@ final class EDSApiProxy extends HttpApiPluginBase
 
         $session_token = $data['SessionToken'];
 
-        $this->cache->set($cid, $session_token, tags: ['session:' . $session_id]); // Session ID invalidates the token
+        $this->cache->set($cid, $session_token, time() + $expires_in, tags: ['session:' . $session_id]); // Session ID invalidates the token
 
-        return $auth_token;
+        return $session_token;
     }
 }
