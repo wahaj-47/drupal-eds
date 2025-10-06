@@ -166,10 +166,6 @@ final class EDSApiProxy extends HttpApiPluginBase
         $response = $this->foundationFactory->createResponse($psr7_response);
         $data = json_decode($response->getContent(), true);
 
-        \Drupal::logger('eds_api_proxy')->debug('Response: @resp', [
-            '@resp' => print_r($data, true),
-        ]);
-
         if (!isset($data['AuthToken'])) {
             \Drupal::logger('eds_api_proxy')->error('Authentication token missing in response: @resp', [
                 '@resp' => print_r($data, true),
@@ -214,10 +210,6 @@ final class EDSApiProxy extends HttpApiPluginBase
 
         $response = $this->foundationFactory->createResponse($psr7_response);
         $data = json_decode($response->getContent(), true);
-
-        \Drupal::logger('eds_api_proxy')->debug('Response: @resp', [
-            '@resp' => print_r($data, true),
-        ]);
 
         if (!isset($data['SessionToken'])) {
             \Drupal::logger('eds_api_proxy')->error('Session token missing in response: @resp', [
