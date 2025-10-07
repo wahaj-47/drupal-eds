@@ -10,6 +10,7 @@ use GuzzleHttp\ClientInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -54,6 +55,25 @@ final class EDSApiProxy extends HttpApiPluginBase
      * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
     private $session;
+
+
+    /**
+     * Caching the request and URI for retries
+     */
+
+    /**
+     * Request
+     * 
+     * @var \Symfony\Component\HttpFoundation\Request
+     */
+    private $request;
+
+    /**
+     * URI where the request is being sent
+     * 
+     * @var string
+     */
+    private $uri;
 
     /**
      * {@inheritdoc}
@@ -131,10 +151,30 @@ final class EDSApiProxy extends HttpApiPluginBase
      */
     public function postprocessOutgoing(Response $response): Response
     {
+        $content = json_decode($response->getContent(), true);
+
+        if (isset($content['ErrorNumber']) && $content['ErrorNumber'] == 109) {
+            // Force delete the store session token and retry
+            $session_id = $this->session->getId();
+            $cid = 'eds.session_token.' . $session_id;
+            $this->cache->delete($cid);
+
+            return $this->forward($this->request, $this->uri);
+        }
         // Modify the response from the API.
         // A common problem is to remove the Transfer-Encoding header.
         $response->headers->remove('transfer-encoding');
         return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function forward(Request $request, string $uri): Response
+    {
+        $this->request = $request;
+        $this->uri = $uri;
+        return parent::forward($request, $uri);
     }
 
     /**
@@ -186,12 +226,10 @@ final class EDSApiProxy extends HttpApiPluginBase
      */
     private function getSessionToken($auth_token): string
     {
-        $expires_in = 1800;
         $session_id = $this->session->getId();
         $cid = 'eds.session_token.' . $session_id;
 
         if ($cache = $this->cache->get($cid)) {
-            $this->cache->set($cid, $cache->data, time() + $expires_in); // Refresh token expiry on use
             return $cache->data;
         }
 
@@ -220,7 +258,7 @@ final class EDSApiProxy extends HttpApiPluginBase
 
         $session_token = $data['SessionToken'];
 
-        $this->cache->set($cid, $session_token, time() + $expires_in, tags: ['session:' . $session_id]); // Session ID invalidates the token
+        $this->cache->set($cid, $session_token, tags: ['session:' . $session_id]); // Session ID invalidates the token
 
         return $session_token;
     }
