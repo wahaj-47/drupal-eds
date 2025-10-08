@@ -21,6 +21,7 @@ class EDSItem extends FieldPluginBase
     public function defineOptions()
     {
         $options = parent::defineOptions();
+        $options['separator'] = ['default' => ', '];
         $options['item_name'] = ['default' => 'Title'];
         // Add this to prevent the warning
         $options['element_class_enable'] = ['default' => FALSE];
@@ -42,6 +43,12 @@ class EDSItem extends FieldPluginBase
      */
     public function buildOptionsForm(&$form, FormStateInterface $form_state)
     {
+        $form['separator'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Separator'),
+            '#default_value' => $this->options['separator'],
+            '#description' => 'If there are multiple items using the same "Name" they are concatenated. This is the separator that will be used to concatenate. It can be a HTML tag'
+        ];
         $form['item_name'] = [
             '#type' => 'select',
             '#title' => $this->t('Item to display'),
@@ -52,6 +59,7 @@ class EDSItem extends FieldPluginBase
                 'Author' => $this->t('Author'),
                 'TypePub' => $this->t('Publication Type'),
                 'Subject' => $this->t('Subject Terms'),
+                'SubjectGeographic' => $this->t('Subject Geographic'),
                 'Abstract' => $this->t('Abstract'),
                 'URL' => $this->t('URL'),
             ],
@@ -66,20 +74,24 @@ class EDSItem extends FieldPluginBase
     public function render(ResultRow $values)
     {
         $item_name = $this->options['item_name'];
-        $data = '';
+        $data = [];
 
         if (!empty($values->items) && is_array($values->items)) {
             foreach ($values->items as $item) {
                 if (($item['Name'] ?? '') === $item_name) {
-                    $data = $item['Data'] ?? '';
-                    break;
+                    $data[] = trim($item['Data']) ?? '';
                 }
             }
         }
 
+        $separator = $this->options['separator'];
+        $data = implode($separator, $data);
         $data = html_entity_decode($data);
         $data = preg_replace('#<searchLink.*?>(.*?)</searchLink>#', '$1', $data);
 
-        return $data;
+        return [
+            '#type' => 'markup',
+            '#markup' => $data
+        ];
     }
 }
