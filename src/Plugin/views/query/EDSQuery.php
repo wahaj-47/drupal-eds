@@ -50,14 +50,14 @@ class EDSQuery extends QueryPluginBase
      * 
      * @var string|null
      */
-    public $search_terms = 'test';
+    public $search_terms;
 
     /**
-     * Search operator
+     * Search mode
      * 
      * @var string|null
      */
-    public $search_match;
+    public $search_mode;
 
     /**
      * Sort by
