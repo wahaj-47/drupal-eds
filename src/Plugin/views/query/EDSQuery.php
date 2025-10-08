@@ -117,7 +117,7 @@ class EDSQuery extends QueryPluginBase
                         '&searchmode=' . 'all' . // enum: any, bool, all, smart 
                         '&view=' . 'detailed' . // enum: title, brief, detailed
                         '&resultsperpage=' . $items_per_page .
-                        '&pagenumber=' . $current_page .
+                        '&pagenumber=' . $current_page + 1 .
                         '&includeimagequickview=' . 'y' .
                         '&highlight=' . 'n'
                 ],
