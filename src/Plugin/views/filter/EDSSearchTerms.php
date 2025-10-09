@@ -92,6 +92,14 @@ class EDSSearchTerms extends FilterPluginBase
     /**
      * {@inheritdoc}
      */
+    public function adminSummary()
+    {
+        return ucfirst($this->options['operator']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function valueForm(&$form, FormStateInterface $form_state)
     {
         parent::valueForm($form, $form_state);
