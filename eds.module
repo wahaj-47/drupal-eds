@@ -24,16 +24,12 @@ function eds_theme($existing, $type, $theme, $path)
     return [
         'eds' => [
             'variables' => [
-                'name' => NULL,
-                'description' => NULL,
-                'owner_first_name' => NULL,
-                'owner_last_name' => NULL,
-                'owner_email' => NULL,
-                'url' => NULL,
-                'friendly_url' => NULL,
-                'tags' => NULL,
-                'subject' => NULL,
-                'search_term' => NULL,
+                'id' => NULL,
+                'header' => NULL,
+                'p_link' => NULL,
+                'image_info' => NULL,
+                'items' => NULL,
+                'custom_links' => NULL,
                 'view' => NULL
             ],
         ],

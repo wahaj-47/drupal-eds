@@ -1,0 +1,17 @@
+{#
+  Available variables 
+  - search_term: The search term that was sent with the query.
+  - id: Record ID
+  - header: Header data [db_id, db_label, an, relevancy_score, access_level, pub_type, pub_type_id]
+  - p_link: Publication link
+  - image_info: Image thumbnail [thumb, medium]
+  - items: Record Items [title, title_alt, title_source, author, type_pub, subject, subject_geographic, abstract, url]
+  - custom_links: Custom link data
+#}
+
+<div class="eds">
+	<h2>
+		<a href="{{ p_link }}">{{ items.title[0] | highlight(search_term) }}</a>
+	</h2>
+	<div class="abstract">{{ items.abstract[0] }}</div>
+</div>

@@ -143,6 +143,7 @@ class EDSQuery extends QueryPluginBase
                 $row['image_info'] = $publication['ImageInfo'] ?? [];
                 $row['items'] = $publication['Items'] ?? [];
                 $row['custom_links'] = $publication['CustomLinks'] ?? [];
+                $row['search_term'] = $this->search_terms;
 
                 $row['index'] = $index++;
 
