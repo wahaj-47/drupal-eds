@@ -86,7 +86,7 @@ class EDSItem extends FieldPluginBase
 
         $separator = $this->options['separator'];
         $data = implode($separator, $data);
-        $data = html_entity_decode($data);
+        $data = strip_tags(html_entity_decode($data));
         $data = preg_replace('#<searchLink.*?>(.*?)</searchLink>#', '$1', $data);
 
         return [
