@@ -112,7 +112,7 @@ class EDSQuery extends QueryPluginBase
                 'query' => [
                     '_api_proxy_uri' => '/edsapi/rest/search' .
                         '?query-1=' . str_replace(",", "\,", $this->search_terms) .
-                        '&sort=' . 'relevance' . // @TODO: Replace with sort plugin
+                        '&sort=' . $this->sort_by .
                         '&includefacets=' . 'y' .
                         '&searchmode=' . $this->search_mode . // enum: any, bool, all, smart 
                         '&view=' . 'detailed' . // enum: title, brief, detailed

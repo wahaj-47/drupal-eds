@@ -26,7 +26,7 @@ function eds_views_data()
 
     $data['eds_node']['eds_sort_by'] = [
         'title' => t('EDS Sort By'),
-        'help' => t('Sorting of returned publications.'),
+        'help' => t('Sorting of returned records.'),
         'sort' => [
             'id' => 'eds_sort_by',
         ],
