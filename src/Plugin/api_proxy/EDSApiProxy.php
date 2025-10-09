@@ -124,6 +124,11 @@ final class EDSApiProxy extends HttpApiPluginBase
             '#title' => $this->t('Password'),
             '#default_value' => $this->configuration['password'] ?? "",
         ];
+        $form['profile'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Profile ID'),
+            '#default_value' => $this->configuration['profile'] ?? "",
+        ];
         return $form;
     }
 
@@ -152,6 +157,12 @@ final class EDSApiProxy extends HttpApiPluginBase
     public function postprocessOutgoing(Response $response): Response
     {
         $content = json_decode($response->getContent(), true);
+
+        if (isset($content['ErrorNumber'])) {
+            \Drupal::logger('eds_api_proxy')->error('Error: @resp', [
+                '@resp' => print_r($response, true),
+            ]);
+        }
 
         if (isset($content['ErrorNumber']) && $content['ErrorNumber'] == 109) {
             // Force delete the store session token and retry
@@ -233,7 +244,8 @@ final class EDSApiProxy extends HttpApiPluginBase
             return $cache->data;
         }
 
-        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=edsapi&guest=y';
+        $profile = $this->configuration['profile'];
+        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=' . $profile . '&guest=y';
 
         $psr7_response = $this->client->request(
             'get',
