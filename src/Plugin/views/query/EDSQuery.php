@@ -111,10 +111,10 @@ class EDSQuery extends QueryPluginBase
             $url = Url::fromUri('internal:/api-proxy/eds_api_proxy', [
                 'query' => [
                     '_api_proxy_uri' => '/edsapi/rest/search' .
-                        '?query-1=' . $this->search_terms .
+                        '?query-1=' . str_replace(",", "\,", $this->search_terms) .
                         '&sort=' . 'relevance' . // @TODO: Replace with sort plugin
-                        '&includefacets=' . 'n' .
-                        '&searchmode=' . 'all' . // enum: any, bool, all, smart 
+                        '&includefacets=' . 'y' .
+                        '&searchmode=' . $this->search_mode . // enum: any, bool, all, smart 
                         '&view=' . 'detailed' . // enum: title, brief, detailed
                         '&resultsperpage=' . $items_per_page .
                         '&pagenumber=' . $current_page + 1 .
