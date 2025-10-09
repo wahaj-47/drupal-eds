@@ -36,7 +36,7 @@ function eds_theme($existing, $type, $theme, $path)
     ];
 }
 
-function eds_theme_suggestions_libguide(array $variables)
+function eds_theme_suggestions_eds(array $variables)
 {
     $view = $variables['view'];
     $suggestions = [];
