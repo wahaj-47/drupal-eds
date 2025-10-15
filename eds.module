@@ -36,6 +36,9 @@ function eds_theme($existing, $type, $theme, $path)
     ];
 }
 
+/**
+ * Implements hook_theme_suggestions().
+ */
 function eds_theme_suggestions_eds(array $variables)
 {
     $view = $variables['view'];
@@ -43,4 +46,28 @@ function eds_theme_suggestions_eds(array $variables)
     $suggestions[] = 'eds__view__' . $view->id();
     $suggestions[] = 'eds__view__' . $view->id() . '__' . $view->current_display;
     return $suggestions;
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function eds_preprocess_views_view(array &$variables)
+{
+    $view = $variables['view'];
+
+    if (!empty($view->exposed_data['facets'])) {
+        $options = [];
+        $options['Any']['any'] = '- Any -';
+
+        $facet_id = 0;
+        foreach ($view->exposed_data['facets'] as $facet) {
+            $filter_id = $facet['Id'];
+            $group = $facet['Label'];
+            foreach ($facet['AvailableFacetValues'] as $value) {
+                $facet_value = $value['Value'];
+                $options[$group][$facet_id++ . "," . $filter_id . ":" . $facet_value] = $facet_value . " (" . $value["Count"] . ")";
+            }
+        }
+        $variables['exposed']['eds_facets']['#options'] = $options;
+    }
 }

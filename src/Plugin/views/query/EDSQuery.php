@@ -2,6 +2,7 @@
 
 namespace Drupal\eds\Plugin\views\query;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ResultRow;
@@ -67,6 +68,13 @@ class EDSQuery extends QueryPluginBase
     public $sort_by;
 
     /**
+     * Facets
+     * 
+     * @var array
+     */
+    public $facets = [];
+
+    /**
      * {@inheritdoc}
      */
     public function __construct(array $configuration, $plugin_id, $plugin_definition, ClientInterface $client, LoggerInterface $logger)
@@ -96,6 +104,7 @@ class EDSQuery extends QueryPluginBase
     public function build(ViewExecutable $view)
     {
         $view->initPager();
+        $view->build_info['query'] = $this;
     }
 
     /**
@@ -108,12 +117,27 @@ class EDSQuery extends QueryPluginBase
             $items_per_page = $view->getItemsPerPage();
             $current_page = $view->getCurrentPage();
 
+            $api_proxy_uri =  '/edsapi/rest/search' .
+                '?query-1=' . str_replace(",", "\,", $this->search_terms) .
+                '&sort=' . $this->sort_by .
+                '&includefacets=' . 'y' .
+                '&searchmode=' . $this->search_mode . // enum: any, bool, all, smart 
+                '&view=' . 'detailed' . // enum: title, brief, detailed
+                '&resultsperpage=' . $items_per_page .
+                '&pagenumber=' . $current_page + 1 .
+                '&includeimagequickview=' . 'y' .
+                '&highlight=' . 'n';
+
+            foreach ($this->facets as $filter) {
+            }
+
             $url = Url::fromUri('internal:/api-proxy/eds_api_proxy', [
                 'query' => [
                     '_api_proxy_uri' => '/edsapi/rest/search' .
                         '?query-1=' . str_replace(",", "\,", $this->search_terms) .
                         '&sort=' . $this->sort_by .
                         '&includefacets=' . 'y' .
+                        '&facetfilter=' . implode($this->facets) .
                         '&searchmode=' . $this->search_mode . // enum: any, bool, all, smart 
                         '&view=' . 'detailed' . // enum: title, brief, detailed
                         '&resultsperpage=' . $items_per_page .
@@ -124,6 +148,8 @@ class EDSQuery extends QueryPluginBase
                 'absolute' => TRUE,
             ])->toString(TRUE)->getGeneratedUrl();
 
+            $this->logger->debug($url);
+
             $response = $this->client->request(
                 'GET',
                 $url,
@@ -132,6 +158,7 @@ class EDSQuery extends QueryPluginBase
             $json = json_decode($response->getBody()->getContents(), TRUE);
 
             $view->pager->total_items = $json['SearchResult']['Statistics']['TotalHits'];
+            $view->exposed_data['facets'] = $json['SearchResult']['AvailableFacets'];
 
             $data = $json['SearchResult']['Data']['Records'];
 

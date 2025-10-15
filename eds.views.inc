@@ -32,6 +32,15 @@ function eds_views_data()
         ],
     ];
 
+    $data['eds_node']['eds_facets'] = [
+        'group' => t('Search'),
+        'title' => t('EDS Facets'),
+        'help' => t('Filter by facet.'),
+        'filter' => [
+            'id' => 'eds_facets',
+        ],
+    ];
+
     // Fields
     $data['eds_node']['id'] = [
         'title' => t('Result ID'),
