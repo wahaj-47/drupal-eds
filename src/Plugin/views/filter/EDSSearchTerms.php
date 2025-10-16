@@ -4,14 +4,14 @@ namespace Drupal\eds\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\eds\Plugin\views\EDSHandlerTrait;
-use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Drupal\views\Plugin\views\filter\BooleanOperator;
 
 /**
  * Filter by searching Scholarly Repository full-text index.
  * 
  * @ViewsFilter("eds_search_terms")
  */
-class EDSSearchTerms extends FilterPluginBase
+class EDSSearchTerms extends BooleanOperator
 {
     use EDSHandlerTrait;
 
@@ -92,14 +92,6 @@ class EDSSearchTerms extends FilterPluginBase
     /**
      * {@inheritdoc}
      */
-    public function adminSummary()
-    {
-        return ucfirst($this->options['operator']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function valueForm(&$form, FormStateInterface $form_state)
     {
         parent::valueForm($form, $form_state);
@@ -118,7 +110,7 @@ class EDSSearchTerms extends FilterPluginBase
         if (!$this->value) return;
 
         // Pass any data you need to your query plugin.
-        $query->search_terms = reset($this->value);
+        $query->search_terms = $this->value;
         $query->search_mode = $this->operator;
     }
 }
