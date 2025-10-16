@@ -53,6 +53,7 @@ function eds_theme_suggestions_eds(array $variables)
  */
 function eds_preprocess_views_view(array &$variables)
 {
+    // This works only if the exposed form in block is set to "No"
     $view = $variables['view'];
 
     if (!empty($view->exposed_data['facets'])) {

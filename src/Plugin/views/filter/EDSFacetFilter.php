@@ -9,7 +9,7 @@ use Drupal\views\Plugin\views\filter\InOperator;
 use Drupal\views\ViewExecutable;
 
 /**
- * EDS Facets.
+ * Filter by Facets. This filter does not work if "Exposed form in block" is set to 'Yes'
  * 
  * @ViewsFilter("eds_facets")
  */
