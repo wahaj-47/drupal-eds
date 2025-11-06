@@ -30,7 +30,8 @@ function eds_theme($existing, $type, $theme, $path)
                 'image_info' => NULL,
                 'items' => NULL,
                 'custom_links' => NULL,
-                'view' => NULL
+                'view' => NULL,
+                'search_term' => NULL,
             ],
         ],
     ];
