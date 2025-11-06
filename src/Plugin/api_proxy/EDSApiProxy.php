@@ -245,7 +245,7 @@ final class EDSApiProxy extends HttpApiPluginBase
         }
 
         $profile = $this->configuration['profile'];
-        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=' . $profile . '&guest=y';
+        $endpoint = rtrim($this->getBaseUrl(), '/') . '/edsapi/rest/createsession?profile=' . $profile . '&guest=n';
 
         $psr7_response = $this->client->request(
             'get',

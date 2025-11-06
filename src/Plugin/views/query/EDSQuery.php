@@ -128,9 +128,6 @@ class EDSQuery extends QueryPluginBase
                 '&includeimagequickview=' . 'y' .
                 '&highlight=' . 'n';
 
-            foreach ($this->facets as $filter) {
-            }
-
             $url = Url::fromUri('internal:/api-proxy/eds_api_proxy', [
                 'query' => [
                     '_api_proxy_uri' => '/edsapi/rest/search' .
