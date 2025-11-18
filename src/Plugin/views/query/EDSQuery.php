@@ -145,8 +145,6 @@ class EDSQuery extends QueryPluginBase
                 'absolute' => TRUE,
             ])->toString(TRUE)->getGeneratedUrl();
 
-            $this->logger->debug($url);
-
             $response = $this->client->request(
                 'GET',
                 $url,
@@ -155,9 +153,9 @@ class EDSQuery extends QueryPluginBase
             $json = json_decode($response->getBody()->getContents(), TRUE);
 
             $view->pager->total_items = $json['SearchResult']['Statistics']['TotalHits'];
-            $view->exposed_data['facets'] = $json['SearchResult']['AvailableFacets'];
+            $view->exposed_data['facets'] = $json['SearchResult']['AvailableFacets'] ?? [];
 
-            $data = $json['SearchResult']['Data']['Records'];
+            $data = $json['SearchResult']['Data']['Records'] ?? [];
 
             $index = 0;
             foreach ($data as $publication) {
