@@ -117,21 +117,10 @@ class EDSQuery extends QueryPluginBase
             $items_per_page = $view->getItemsPerPage();
             $current_page = $view->getCurrentPage();
 
-            $api_proxy_uri =  '/edsapi/rest/search' .
-                '?query-1=' . str_replace(",", "\,", $this->search_terms) .
-                '&sort=' . $this->sort_by .
-                '&includefacets=' . 'y' .
-                '&searchmode=' . $this->search_mode . // enum: any, bool, all, smart 
-                '&view=' . 'detailed' . // enum: title, brief, detailed
-                '&resultsperpage=' . $items_per_page .
-                '&pagenumber=' . $current_page + 1 .
-                '&includeimagequickview=' . 'y' .
-                '&highlight=' . 'n';
-
             $url = Url::fromUri('internal:/api-proxy/eds_api_proxy', [
                 'query' => [
                     '_api_proxy_uri' => '/edsapi/rest/search' .
-                        '?query-1=' . str_replace(",", "\,", $this->search_terms) .
+                        '?query-1=' . str_replace(",", "\,", $this->search_terms ?? "LSU") .
                         '&sort=' . $this->sort_by .
                         '&includefacets=' . 'y' .
                         '&facetfilter=' . implode($this->facets) .
