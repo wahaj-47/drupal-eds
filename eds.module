@@ -59,7 +59,7 @@ function eds_preprocess_views_view(array &$variables)
 
     if (!empty($view->exposed_data['facets'])) {
         $options = [];
-        $options['Any'][''] = '- Any -';
+        $options['Any'][''] = 'All categories';
 
         $facet_id = 0;
         foreach ($view->exposed_data['facets'] as $facet) {
